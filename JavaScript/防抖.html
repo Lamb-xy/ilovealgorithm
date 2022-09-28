@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <button id="btn">点击</button>
+        <script>
+            /**
+             * 防抖（debounce）：触发完事件 n 秒内不再触发事件，n秒后再执行。
+             * 应用场景：窗口大小变化、搜索框、表单校验
+             */
+
+            window.addEventListener('resize', debounce(handleResize, 200));
+            function handleResize() {
+                console.log(1);
+            }
+            // 不立即执行
+            function debounce(event, time) {
+                let timer = null;
+                return function (...args) {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => {
+                        event.apply(this, args);
+                    }, time);
+                };
+            }
+            // flag 用于标识是否立即执行
+            function debounce1(event, time, flag) {
+                let timer = null;
+                return function (...args) {
+                    clearTimeout(timer);
+                    if (flag && !timer) {
+                        event.apply(this, args);
+                    }
+                    timer = setTimeout(() => {
+                        event.apply(this, args);
+                    }, time);
+                };
+            }
+        </script>
+    </body>
+</html>

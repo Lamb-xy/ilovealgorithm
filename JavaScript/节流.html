@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <button id="btn">点击</button>
+        <script>
+            let btn = document.getElementById('btn');
+            btn.addEventListener('click', throttle3(handleClick, 500));
+            function handleClick() {
+                console.log(1);
+            }
+
+            /**
+             * 节流（throttle）:不管事件触发频率多高，只在单位时间内执行一次。
+             * 应用场景：加载更多，表单重复提交
+             */
+
+            // 时间戳版本：第一次触发，最后一次不触发
+            function throttle1(event, time) {
+                let pre = 0;
+                return function (...args) {
+                    if (Date.now() - pre > time) {
+                        pre = Date.now();
+                        event.apply(this, args);
+                    }
+                };
+            }
+            // 定时器版本：第一次不触发，最后一次触发
+            function throttle2(event, time) {
+                let timer = null;
+                return function (...args) {
+                    if (!timer) {
+                        timer = setTimeout(() => {
+                            timer = null;
+                            event.apply(this, args);
+                        }, time);
+                    }
+                };
+            }
+            // 时间戳+定时器版本：第一次和最后一次都会触发
+            function throttle3(event, time) {
+                let timer = null;
+                let pre = 0;
+                return function (...args) {
+                    let end = Date.now();
+                    let remainder = time - (end - pre);
+                    clearTimeout(timer);
+                    if (remainder <= 0) {
+                        pre = end;
+                        event.apply(this, args);
+                    } else {
+                        timer = setTimeout(() => {
+                            pre = end;
+                            event.apply(this, args);
+                        }, remainder);
+                    }
+                };
+            }
+        </script>
+    </body>
+</html>
